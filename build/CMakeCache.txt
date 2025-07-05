@@ -401,9 +401,6 @@ GTest_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/GTest
 // may want to turn this OFF.)
 INSTALL_GTEST:BOOL=OFF
 
-//The directory containing a CMake configuration file for IPOPT.
-IPOPT_DIR:PATH=IPOPT_DIR-NOTFOUND
-
 //Path to a library.
 IPOPT_LIBRARIES:FILEPATH=/usr/lib/libipopt.so
 

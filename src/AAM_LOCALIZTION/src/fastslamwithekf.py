@@ -4,14 +4,16 @@ import string
 import matplotlib.pyplot as plt
 import rospy
 from visualization_msgs.msg import Marker, MarkerArray
+import tf_conversions
 import numpy as np
 from ackermann_msgs.msg import AckermannDriveStamped
 from scipy.stats import multivariate_normal
-from std_msgs.msg import Float32MultiArray
 from sensor_msgs.msg import Imu
 from nav_msgs.msg import Path
 from geometry_msgs.msg import PoseStamped
 from ma_rrt_path_plan.msg import WaypointsArray
+from nav_msgs.msg import Odometry
+from tf.transformations import euler_from_quaternion 
 
 N_PARTICLE = 20  # number of particle
 NTH= 2
@@ -65,14 +67,18 @@ class fastslam:
         self.cones_sub = rospy.Subscriber("/camera_cones_marker", MarkerArray, self.cones_callback)
         rospy.Subscriber('/waypoints', WaypointsArray, self.waypoints_callback)
 
-        self.commandcontrol_sub = rospy.Subscriber("vel_ekf",Float32MultiArray, self.control_callback)
+        self.odom_sub = rospy.Subscriber(
+    '/ekf_odom', Odometry, self.ekf_odom_callback, queue_size=1)
+
         self.path_publisher = rospy.Publisher('/robot_path', Path, queue_size=10)
         
         self.pc_pub = rospy.Publisher("cone_loc", MarkerArray, queue_size=1)
         self.testcone=rospy.Publisher("/test", MarkerArray, queue_size=1)
         self.particles_pub = rospy.Publisher("particles_pub", MarkerArray, queue_size=1)
         self.marker_pub = rospy.Publisher('visualization_loc', Marker, queue_size=10)
-        self.id1=0 
+        self.vel_pub = rospy.Publisher('/velocity_vectors', MarkerArray, queue_size=1)
+        self.vel_timer = rospy.Timer(rospy.Duration(0.1), self.publish_velocity_markers)
+        self.id1=0
         self.id2=100
     def waypoints_callback(self, wp):
         # Assuming wp has fields 'loopClosure' and 'preliminaryLoopClosure'
@@ -86,40 +92,59 @@ class fastslam:
             
             self.keys[0] = 1
             self.predict()
-    def control_callback (self,controls):
-                       
-                        if self.keys[1] != -1:
-                            self.keys[1] = 0
-                            self.vx=controls.data[0]
-                            self.vy=controls.data[1]
-                            self.ans=controls.data[3]
-                            #print(self.vx)
-                            self.keys[1] = 1
-                            self.predict()
+            rospy.loginfo_throttle(1.0,
+              "Particles: %d   Path length: %d   Cones: %d",
+              len(self.particles),
+              len(self.path_msg.poses),
+              len(self.goodcones))
+    def ekf_odom_callback(self, msg):
+        # linear velocities from your EKF
+        self.vx = msg.twist.twist.linear.x
+        self.vy = msg.twist.twist.linear.y
+
+        # yaw from the EKF’s pose orientation
+        q = msg.pose.pose.orientation
+        _, _, self.ans = euler_from_quaternion(
+            [q.x, q.y, q.z, q.w])
+        rospy.logdebug("EKF→ vx=%.3f vy=%.3f yaw=%.3f", self.vx, self.vy, self.ans)
+
     def predict(self):
-                                     
-        
-        #predicting each particle depending on state estimation readings
-        if self.keys[0] == 1 and self.keys[1] == 1:
-
+        if self.keys[0] == 1:
+            # clear the key so we don’t re-enter until next cones_callback
             self.keys = [-1, -1]
-            #calculating dt
 
-            if (self.i==0):
-                dt=0.05
-                self.i=1
-                self.timefromlast=rospy.Time.now().to_sec()
+            # 1) grab the current wall-clock
+            now = rospy.Time.now().to_sec()
+
+            # 2) compute dt: fixed 0.05s on first run, otherwise real Δt
+            if self.i == 0:
+                dt = 0.05
+                self.i = 1
             else:
-                currenttime1=rospy.Time.now().to_sec()           
-                dt=(currenttime1-self.currenttime)
-                for i in range(len(self.particles)):
-                    self.particles[i]=self.bicyclemodel(self.particles[i],dt)
-            #print(dt)        
-            self.currenttime=rospy.Time.now().to_sec()
+                dt = now - self.currenttime
+
+            # 3) debug what we’re about to do
+            rospy.logdebug("⏱️ predict() — vx=%.3f vy=%.3f dt=%.3f",
+                           self.vx, self.vy, dt)
+
+            # 4) move every particle
+            for idx, p in enumerate(self.particles):
+                self.particles[idx] = self.bicyclemodel(p, dt)
+
+            # 5) remember this timestamp, then fuse cones
+            self.currenttime = now
             self.update()
+
     
 
     def update(self):
+        # safely count how many new cones we just received
+        try:
+            num_new = len(self.currentnewcones.markers)
+        except Exception:
+            num_new = len(self.currentnewcones or [])
+        rospy.loginfo("▶ SLAM.update() called: %d newcones, vx=%.3f, vy=%.3f",
+                      num_new, self.vx, self.vy)
         #calculating estimate    
         self.est=self.calcest()
         
@@ -217,7 +242,13 @@ class fastslam:
                     marker_array.markers.append(marker)
 
              self.testcone.publish(marker_array)
-             
+
+        rospy.loginfo_throttle(1.0,
+            "Particles: %d   Path length: %d   Cones: %d",
+            len(self.particles),
+            len(self.path_msg.poses),
+            len(self.goodcones))
+
         self.keys=[0,0]
     def visualizeloc(self):
         marker = Marker()
@@ -278,31 +309,63 @@ class fastslam:
             # Add the marker to the marker array
             marker_array.markers.append(marker)
           self.particles_pub.publish(marker_array)
+
+    def publish_velocity_markers(self, event):
+        markers = MarkerArray()
+        for i, p in enumerate(self.particles):
+            m = Marker()
+            m.header.frame_id = 'map'
+            m.header.stamp = rospy.Time.now()
+            m.ns = 'velocity'
+            m.id = i
+            m.type = Marker.ARROW
+            m.action = Marker.ADD
+            m.pose.position.x = p.x
+            m.pose.position.y = p.y
+            m.pose.position.z = 0
+            yaw = p.yaw
+            vx_w = self.vx * math.cos(yaw) - self.vy * math.sin(yaw)
+            vy_w = self.vx * math.sin(yaw) + self.vy * math.cos(yaw)
+            angle = math.atan2(vy_w, vx_w)
+            q = tf_conversions.transformations.quaternion_from_euler(0, 0, angle)
+            m.pose.orientation.x = q[0]
+            m.pose.orientation.y = q[1]
+            m.pose.orientation.z = q[2]
+            m.pose.orientation.w = q[3]
+            m.scale.x = math.hypot(vx_w, vy_w) * 0.5
+            m.scale.y = 0.05
+            m.scale.z = 0.05
+            m.color.r = 1.0
+            m.color.g = 1.0
+            m.color.b = 0.0
+            m.color.a = 1.0
+            markers.markers.append(m)
+        self.vel_pub.publish(markers)
          
     def visualizeb(self, x1, y1):
-        # Create a new PoseStamped for the current estimate
-        pose = PoseStamped()
-        pose.header.stamp = rospy.Time.now()
-        pose.header.frame_id = 'map'
-        pose.pose.position.x = x1
-        pose.pose.position.y = y1
-        pose.pose.position.z = 0  # or your desired z value
+        # get the last appended position (if any)
+        last = self.path_msg.poses[-1].pose.position if self.path_msg.poses else None
 
-        # Append the current pose to the path message
-        self.path_msg.poses.append(pose)
+        # only append if we've moved more than 5 cm
+        if last is None or math.hypot(x1 - last.x, y1 - last.y) > 0.05:
+            pose = PoseStamped()
+            pose.header.stamp    = rospy.Time.now()
+            pose.header.frame_id = 'map'
+            pose.pose.position.x = x1
+            pose.pose.position.y = y1
+            pose.pose.position.z = 0.0
+            self.path_msg.poses.append(pose)
 
-        # (Optional) Limit the number of poses to avoid an ever‐growing list
-        # max_poses = 1000
-        # if len(self.path_msg.poses) > max_poses:
-        #     self.path_msg.poses = self.path_msg.poses[-max_poses:]
+            # (Optional) cap the length so it doesn't grow forever
+            # if len(self.path_msg.poses) > 1000:
+            #     self.path_msg.poses = self.path_msg.poses[-1000:]
 
-        # Publish the updated path
-        self.path_publisher.publish(self.path_msg)
+            # publish only when we actually appended a new point
+            self.path_msg.header.stamp = rospy.Time.now()
+            self.path_publisher.publish(self.path_msg)
 
-        # Instead of computing the loop closure flag locally, use the flag from /waypoints:
-        loopclosureflag = self.loopClosureFlag  if hasattr(self, 'loopClosureFlag') else False
-
-        return loopclosureflag
+        # return your loop closure flag as before
+        return getattr(self, 'loopClosureFlag', False)
 
     def visualizec(self,cones):
          marker_array = MarkerArray()
@@ -569,21 +632,28 @@ class fastslam:
                             if(partorest==1):
                                 self.currentconeid+=1
         
-                return newcones,oldcones   
-    def bicyclemodel(self,particle,dt):
-         mean = 0
-         std_dev = 0.4  # Adjust this value to control the amount of noise
-            # Adding Gaussian noise
-         noise = np.random.normal(mean, std_dev)
-        #Simulating bicycle model
-         #noise=0
-         particle.x=particle.x+(self.vx+noise)*dt
-         particle.y=particle.y+(self.vy+noise)*dt
-         #particle.yaw=particle.yaw+self.angular_vel*dt
-         particle.yaw=self.ans
-         particle.yaw=self.pi_2_pi(particle.yaw) 
-         
-         return particle
+                return newcones,oldcones
+       
+    def bicyclemodel(self, particle, dt):
+        # 1) add a bit of Gaussian motion noise
+        mean    = 0.0
+        std_dev = 0.02        # tune this lower if needed
+        noise   = np.random.normal(mean, std_dev)
+
+        # 2) rotate body‐frame (vx, vy) into world‐frame (vx_w, vy_w)
+        yaw   = self.ans
+        vx_w  = self.vx * math.cos(yaw) - self.vy * math.sin(yaw)
+        vy_w  = self.vx * math.sin(yaw) + self.vy * math.cos(yaw)
+
+        # 3) integrate position in world coordinates
+        particle.x += (vx_w + noise) * dt
+        particle.y += (vy_w + noise) * dt
+
+        # 4) update the heading to the filtered yaw
+        particle.yaw = self.pi_2_pi(yaw)
+
+        return particle
+
     def pi_2_pi(self,angle):
        #normalize angle
        return (angle + math.pi) % (2 * math.pi) - math.pi                         
