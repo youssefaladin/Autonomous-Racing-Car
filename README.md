@@ -111,7 +111,7 @@ Each stage is an independent ROS package that communicates over topics, so modul
 ```
 grad_proj/
 ├── src/
-│   ├── AAM_PERCEPTION/        # Camera (YOLOv5) + LiDAR cone detection
+│   ├── AAM_PERCEPTION/        # Camera (YOLOv5) 
 │   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU + GSS
 │   ├── AAM_LOCALIZATION/      # FastSLAM + EKF mapping & localization
 │   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing-line generation
