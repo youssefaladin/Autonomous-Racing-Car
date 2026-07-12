@@ -129,14 +129,6 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 
 ---
 
-## 📊 Results
-
-| Mission | Result |
-|---------|--------|
-| Trackdrive | ✅ Completed |
-
----
-
 ## 🧭 Roadmap / Future Work
 
 - [ ] Real time perception on embedded hardware
