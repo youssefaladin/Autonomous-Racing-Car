@@ -1,10 +1,3 @@
-<!--
-  ╭──────────────────────────────────────────────────────────────╮
-  │  BEFORE YOU PUBLISH — fill in every [PLACEHOLDER] below.       │
-  │  They are marked with 👉. Delete this comment block when done. │
-  ╰──────────────────────────────────────────────────────────────╯
--->
-
 <div align="center">
 
 # 🏎️ Autonomous Racing Car — Formula Student Driverless Stack
@@ -23,44 +16,36 @@
 ---
 
 ## 🎥 Demo
-
-> 👉 **This is the most important part for recruiters — put your video here.**
-> Two good options:
-> 1. Upload the video to **YouTube (unlisted is fine)** and embed a clickable thumbnail (recommended — see below).
-> 2. Convert a short highlight to a **GIF** and drop it in `docs/` so it auto-plays on the page.
-
 <!-- OPTION 1: YouTube thumbnail that links to the video.
      Replace VIDEO_ID in both URLs. -->
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)
+[![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
 
 <!-- OPTION 2: inline GIF (uncomment and add the file to docs/)
 ![Simulation demo](docs/demo.gif)
 -->
 
-*A lap driven fully autonomously in simulation: the car detects cones, builds the track, plans a path, and follows it under closed-loop control.*
-
+A lap driven fully autonomously in the Gazebo simulation: the car detects cones, builds the track with SLAM, plans a path, and follows it under closed-loop control.
 ---
 
 ## 📌 Overview
 
-This project is a complete **autonomous driving software stack for a Formula Student Driverless (FSD) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
+This project is a complete **autonomous driving software stack for a Formula Student Driverless (FS-AI) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
 
 The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation before deployment to the real vehicle, which is interfaced over **CAN bus**.
 
-> 👉 **Context to add (1 sentence):** This was my graduation project with Formula Student team **AAM** at **[University Name]** *(fill in)*.
+ This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
 
 ---
 
 ## 🎯 My Contribution
 
-This is a multi-person Formula Student project. I personally designed and implemented two of its core subsystems:
+This is a multi-person Formula Student project. I personally designedand implemented two of its core subsystems:
 
 ### 🎮 Control
 - **Model Predictive Control (MPC) in Python** — a **linear time-varying (LTV) MPC** built on a kinematic bicycle model with a 10-step horizon (10 Hz). At each step the dynamics are linearized and the problem is formulated as a **quadratic program solved online with OSQP**, optimizing steering and acceleration over the state `[x, y, ψ, v]` to track the reference path.
 - **Curvature-aware speed profiling** — the controller estimates path curvature ahead and adapts target speed accordingly, braking into corners and accelerating on straights.
 - **Waypoint smoothing** — a moving-average filter over recent waypoint history stabilizes the reference path and reduces jitter in the control commands.
 - **Classical control baselines** — I also implemented **Pure Pursuit**, **Stanley**, and **PID** controllers to benchmark the MPC against established methods.
-- **CAN interface to the real vehicle** — the `AI2VCU` / `VCU2AI` bridge that translates high-level control commands into actuator messages over the car's CAN bus, closing the loop from software to hardware.
 
 ### 🗺️ SLAM & Localization
 - **FastSLAM with an EKF** — a particle-filter SLAM implementation (20 particles) where each particle maintains its own map, with **per-particle Extended Kalman Filter** updates for cone landmark positions and **loop-closure detection** to correct drift over a full lap.
@@ -72,7 +57,7 @@ This is a multi-person Formula Student project. I personally designed and implem
 ## ✨ Key Features
 
 - **End-to-end autonomy** — a full perceive → estimate → map → plan → control loop running in real time on ROS.
-- **Dual-sensor perception** — cone detection from a **camera (YOLOv5)** and a **LiDAR**, fused into a single obstacle map.
+- **Dual-sensor perception** — cone detection from a **camera (YOLOv5)** fused into a single obstacle map.
 - **SLAM & localization** — **FastSLAM** (particle filter) with **per-particle EKF** landmark updates and loop closure builds a map of the track and localizes the car within it.
 - **Path planning** — **RRT-based** exploration plus midline generation from cone pairs to produce a drivable racing line.
 - **Multiple controllers** — a **linear time-varying MPC (Python, OSQP)** with curvature-aware speed profiling, plus classical baselines (**Pure Pursuit, Stanley, PID**) for benchmarking.
