@@ -1,0 +1,36 @@
+# ─── ROS / catkin build artifacts (never commit these) ───
+build/
+devel/
+logs/
+install/
+.catkin_workspace
+*.pyc
+__pycache__/
+
+# ─── Model weights & large binaries (host these elsewhere, e.g. releases) ───
+*.pt
+*.pth
+*.weights
+*.onnx
+*.engine
+
+# ─── Editor / OS clutter ───
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ─── Project scratch / generated data ───
+*.csv
+!map_code_transformed_small_track.csv   # keep only data files you actually need; edit this list
+frames.gv
+output.csv
+
+# ─── Python envs ───
+venv/
+.env/
+*.egg-info/
+
+# ─── Compressed archives that shouldn't be tracked ───
+*.zip
