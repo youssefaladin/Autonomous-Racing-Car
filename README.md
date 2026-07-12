@@ -76,8 +76,6 @@ This is a multi-person Formula Student project. I personally designedand impleme
 
 Each stage is an independent ROS package that communicates over topics, so modules can be developed, tested, and swapped in isolation.
 
-Each stage is an independent ROS package that communicates over topics, so modules can be developed, tested, and swapped in isolation.
-
 ---
 
 ## 🗂️ Repository Structure
