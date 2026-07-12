@@ -127,8 +127,6 @@ roslaunch LAUNCH bringup.launch          # brings up the full autonomous stack
 roslaunch aam_cars small_track.launch    # loads the Gazebo track
 ```
 
-> 👉 List the real launch files a user should run, in order. This is the #1 thing that makes a repo look "finished" — someone can actually run it.
-
 ---
 
 ## 📊 Results
