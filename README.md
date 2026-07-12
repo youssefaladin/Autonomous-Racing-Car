@@ -105,7 +105,7 @@ grad_proj/
 - Ubuntu 20.04
 - [ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
 - Gazebo 11
-- Python 3.8+ with the packages in `requirements.txt` <!-- 👉 add one if you don't have it -->
+- Python 3.8+ with the packages in `
 
 ### Build
 ```bash
@@ -121,7 +121,7 @@ source devel/setup.bash
 
 ### Run the simulation
 ```bash
-# 👉 Replace with your actual top-level launch command(s).
+#  Replace with your actual top-level launch command(s).
 # Example:
 roslaunch LAUNCH bringup.launch          # brings up the full autonomous stack
 roslaunch aam_cars small_track.launch    # loads the Gazebo track
