@@ -68,39 +68,13 @@ This is a multi-person Formula Student project. I personally designedand impleme
 
 ## 🧠 System Architecture
 
-```mermaid
-flowchart LR
-    subgraph Sensors
-        CAM[Camera]
-        LID[LiDAR]
-        IMU[IMU / GSS]
-    end
+<div align="center">
 
-    subgraph Perception
-        YOLO[YOLOv5 Cone Detection]
-        LCD[LiDAR Cone Detection]
-    end
+![System Architecture](docs/architecture.png)
 
-    subgraph Estimation
-        SE[State Estimation]
-        SLAM[FastSLAM + EKF]
-    end
+</div>
 
-    PP[Path Planning<br/>RRT + Midline]
-    CTRL[Control<br/>MPC / Pure Pursuit / Stanley]
-    VCU[CAN Interface<br/>AI2VCU]
-
-    CAM --> YOLO
-    LID --> LCD
-    IMU --> SE
-    YOLO --> SLAM
-    LCD --> SLAM
-    SE --> SLAM
-    SLAM --> PP
-    PP --> CTRL
-    CTRL --> VCU
-    VCU --> Car((🏎️ Vehicle))
-```
+Each stage is an independent ROS package that communicates over topics, so modules can be developed, tested, and swapped in isolation.
 
 Each stage is an independent ROS package that communicates over topics, so modules can be developed, tested, and swapped in isolation.
 
