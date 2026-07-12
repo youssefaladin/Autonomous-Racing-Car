@@ -13,7 +13,7 @@
 <include file="$(find AAM_STATE_ESTIMATION)/launch/stateestimation.launch" />
 
 
-<node name="delay_launch_4" pkg="LAUNCH" type="delay_launch.py" args="1 $(find         AAM_LOCALIZTION)/launch/localization.launch" output="screen" />
+<node name="delay_launch_4" pkg="LAUNCH" type="delay_launch.py" args="1 $(find         AAM_LOCALIZATION)/launch/localization.launch" output="screen" />
 -->
 <node name="delay_launch_5" pkg="LAUNCH" type="delay_launch.py" args="2 $(find         AAM_CONTROL)/launch/acccontrol.launch" output="screen" />
 

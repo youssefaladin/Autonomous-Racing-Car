@@ -35,7 +35,7 @@ def main():
     # Step 5: Launch localization after stateestimation in a new tab
     #while not rospy.get_param('stateestimation_ready'):
         #time.sleep(1)
-    #launch_in_new_tab("AAM_LOCALIZTION", "localization.launch")
+    #launch_in_new_tab("AAM_LOCALIZATION", "localization.launch")
     #rospy.set_param('localization_ready', True)
 
     # Step 6: Launch control after localization in a new tab

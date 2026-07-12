@@ -1,8 +1,0 @@
-prefix=/home/joe/catkin_ws/devel
-
-Name: PLUGINS
-Description: Description of PLUGINS
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

@@ -24,7 +24,7 @@
   <node name="delay_launch_4"
         pkg="LAUNCH"
         type="delay_launch.py"
-        args="1 $(find AAM_LOCALIZTION)/launch/localization.launch"
+        args="1 $(find AAM_LOCALIZATION)/launch/localization.launch"
         output="screen" />
 
   <!-- Delay launch for Track Control -->

@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-
-    <node name="localization" pkg="AAM_LOCALIZTION" type="fastslamwithekf.py" output="screen"/>
-    <node  name="rviz2" pkg="rviz" type="rviz" args="-d $(find AAM_LOCALIZTION)/rviz/slam.rviz"/> 
-
-
-</launch>

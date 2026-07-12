@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     
-    <node name="control" pkg="AAM_CONTROL" type="new_paper.py" output="screen"/> 
+    <node name="control" pkg="AAM_CONTROL" type="mpc_controller_osqp.py" output="screen"/> 
     
 
 </launch>
