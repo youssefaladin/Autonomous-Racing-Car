@@ -167,7 +167,7 @@ This project builds on excellent open-source work:
 **Youssef Alaa Eldin Hamada**
 Control & Localization Engineer — Formula Student team AAM
 **Hazem Mohamed Belal** 
-Path Planning — Formula Student team AAM
+Path Planning &  Localization Engineer — Formula Student team AAM
 *(Implemented RRT Algorithm)*
 **Amr El-Meligy** 
 State estimation — Formula Student team AAM
