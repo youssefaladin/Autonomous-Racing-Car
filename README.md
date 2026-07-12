@@ -16,13 +16,8 @@
 ---
 
 ## 🎥 Demo
-<!-- OPTION 1: YouTube thumbnail that links to the video.
-     Replace VIDEO_ID in both URLs. -->
-[![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
 
-<!-- OPTION 2: inline GIF (uncomment and add the file to docs/)
-![Simulation demo](docs/demo.gif)
--->
+[![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
 
 A lap driven fully autonomously in the Gazebo simulation: the car detects cones, builds the track with SLAM, plans a path, and follows it under closed-loop control.
 ---
@@ -39,7 +34,7 @@ The entire stack is developed in **ROS** and validated in a **Gazebo** physics s
 
 ## 🎯 My Contribution
 
-This is a multi-person Formula Student project. I personally designedand implemented two of its core subsystems:
+This is a multi-person Formula Student project. I personally designed and implemented two of its core subsystems:
 
 ### 🎮 Control
 - **Model Predictive Control (MPC) in Python** — a **linear time-varying (LTV) MPC** built on a kinematic bicycle model with a 10-step horizon (10 Hz). At each step the dynamics are linearized and the problem is formulated as a **quadratic program solved online with OSQP**, optimizing steering and acceleration over the state `[x, y, ψ, v]` to track the reference path.
@@ -102,7 +97,7 @@ grad_proj/
 | **Middleware** | ROS Noetic (catkin) |
 | **Languages** | C++17, Python 3 |
 | **Simulation** | Gazebo, RViz |
-| **Perception** | YOLOv5, OpenCV) |
+| **Perception** | YOLOv5, OpenCV |
 | **Estimation** | FastSLAM, Extended Kalman Filter |
 | **Control** | Model Predictive Control (OSQP QP solver), Pure Pursuit, Stanley, PID |
 | **Vehicle I/O** | CAN bus (VCU ↔ AI) |
@@ -145,8 +140,6 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 
 | Mission | Result |
 |---------|--------|
-| Acceleration | ✅ Completed |
-| Skidpad | ✅ Completed |
 | Trackdrive | ✅ Completed |
 
 ---
@@ -171,17 +164,17 @@ This project builds on excellent open-source work:
 
 ## 👤 Author
 
-**Youssef Alaa Eldin Hamada** <!-- 👉 -->
+**Youssef Alaa Eldin Hamada**
 Control & Localization Engineer — Formula Student team AAM
-**Hazem Mohamed Belal** <!-- 👉 -->
+**Hazem Mohamed Belal** 
 Path Planning — Formula Student team AAM
 *(Implemented RRT Algorithm)*
-**Amr El-Meligy** <!-- 👉 -->
+**Amr El-Meligy** 
 State estimation — Formula Student team AAM
-**Karim Abo El-Azam** <!-- 👉 -->
- Perciption— Formula Student team AAM
- **Abdelrahman bassiouny** <!-- 👉 -->
- Perciption— Formula Student team AAM
+**Karim Abo El-Azam** 
+ Perception— Formula Student team AAM
+ **Abdelrahman bassiouny** 
+ Perception— Formula Student team AAM
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/youssef-aladdin-a58056301/)
 [![Email](https://img.shields.io/badge/Email-Contact-D14836?logo=gmail&logoColor=white)](mailto:youssefaladdinn@gmail.com)
