@@ -116,15 +116,11 @@ grad_proj/
 │   ├── AAM_LOCALIZATION/      # FastSLAM + EKF mapping & localization
 │   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing-line generation
 │   ├── AAM_CONTROL/           # MPC, Pure Pursuit, Stanley, PID + CAN interface
-│   ├── mpc_control/           # C++ MPC solver node
 │   ├── aam_cars/              # Vehicle model, sensors & Gazebo tracks (EUFS-based)
 │   ├── LAUNCH/                # Top-level launch files to bring up the stack
 │   └── PLUGINS/               # Simulation / mission plugins
 └── README.md
 ```
-
-> 👉 Note: I renamed `AAM_LOCALIZTION` → `AAM_LOCALIZATION` (typo fix) in the structure above — see the cleanup guide.
-
 ---
 
 ## 🛠️ Tech Stack
@@ -175,10 +171,6 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 
 ## 📊 Results
 
-> 👉 Add a few concrete numbers or screenshots — recruiters love evidence.
-> Examples: "Completed a full trackdrive lap at up to X m/s", "cone detection mAP of X%",
-> "MPC reduced lateral tracking error by X% vs. Pure Pursuit". Even rough figures help.
-
 | Mission | Result |
 |---------|--------|
 | Acceleration | ✅ Completed |
@@ -203,22 +195,24 @@ This project builds on excellent open-source work:
 - **[YOLOv5](https://github.com/ultralytics/yolov5)** by Ultralytics — camera cone detection.
 - **[MA-RRT path planning](https://github.com/AutonomicManipulation/ma_rrt_path_plan)** — RRT reference implementation.
 
-> 👉 Keep this section. Being clear about what you built vs. what you reused is a sign of maturity that experienced engineers respect.
-
 ---
 
 ## 👤 Author
 
-**[Your Full Name]** <!-- 👉 -->
+**Youssef Alaa Eldin Hamada** <!-- 👉 -->
 Control & Localization Engineer — Formula Student team AAM
-*(Implemented the MPC/classical controllers, CAN vehicle interface, and FastSLAM localization.)*
+**Hazem Mohamed Belal** <!-- 👉 -->
+Path Planning — Formula Student team AAM
+*(Implemented RRT Algorithm)*
+**Amr El-Meligy** <!-- 👉 -->
+State estimation — Formula Student team AAM
+**Karim Abo El-Azam** <!-- 👉 -->
+ Perciption— Formula Student team AAM
+ **Abdelrahman bassiouny** <!-- 👉 -->
+ Perciption— Formula Student team AAM
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin&logoColor=white)](https://linkedin.com/in/YOUR-HANDLE)
-[![Email](https://img.shields.io/badge/Email-Contact-D14836?logo=gmail&logoColor=white)](mailto:you@example.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/youssef-aladdin-a58056301/)
+[![Email](https://img.shields.io/badge/Email-Contact-D14836?logo=gmail&logoColor=white)](mailto:youssefaladdinn@gmail.com)
 
 ---
 
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for details.
-<!-- 👉 Add a LICENSE file — GitHub can generate one in two clicks (Add file → Create new file → type "LICENSE" → choose a template). -->
