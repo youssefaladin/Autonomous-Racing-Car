@@ -112,7 +112,7 @@ Each stage is an independent ROS package that communicates over topics, so modul
 grad_proj/
 ├── src/
 │   ├── AAM_PERCEPTION/        # Camera (YOLOv5) 
-│   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU + GSS
+│   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU
 │   ├── AAM_LOCALIZATION/      # FastSLAM + EKF mapping & localization
 │   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing-line generation
 │   ├── AAM_CONTROL/           # MPC, Pure Pursuit, Stanley, PID + CAN interface
@@ -130,7 +130,7 @@ grad_proj/
 | **Middleware** | ROS Noetic (catkin) |
 | **Languages** | C++17, Python 3 |
 | **Simulation** | Gazebo, RViz |
-| **Perception** | YOLOv5, OpenCV, PCL (LiDAR) |
+| **Perception** | YOLOv5, OpenCV) |
 | **Estimation** | FastSLAM, Extended Kalman Filter |
 | **Control** | Model Predictive Control (OSQP QP solver), Pure Pursuit, Stanley, PID |
 | **Vehicle I/O** | CAN bus (VCU ↔ AI) |
