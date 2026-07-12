@@ -31,7 +31,7 @@ A lap driven fully autonomously in the Gazebo simulation: the car detects cones,
 
 This project is a complete **autonomous driving software stack for a Formula Student Driverless (FS-AI) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
 
-The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation before deployment to the real vehicle, which is interfaced over **CAN bus**.
+The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation before deployment to the real vehicle.
 
  This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
 
