@@ -132,9 +132,9 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 ## 🧭 Roadmap / Future Work
 
 - [✔️] Real time perception on embedded hardware
-- [✔️ ] Sensor fusion improvements (camera–LiDAR calibration)
+- [✔️] Sensor fusion improvements (camera–LiDAR calibration)
 - [✔️] Learning based racing line optimization
-- [✔️ ] Full deployment & testing on the physical vehicle
+- [✔️] Full deployment & testing on the physical vehicle
 
 ---
 
