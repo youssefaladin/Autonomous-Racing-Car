@@ -1,10 +1,9 @@
 <div align="center">
 
-# 🏎️ Autonomous Racing Car — Formula Student Driverless Stack
+# 🏎️ Autonomous Racing Car Formula Student Driverless Stack
 
-**A full self-driving software pipeline for a Formula Student Driverless race car — perception, localization, planning, and control — built on ROS and validated in a Gazebo simulation.**
+**A full self driving software pipeline for a Formula Student Driverless race car perception, localization, planning, and control — built on ROS and validated in a Gazebo simulation.**
 
-<!-- 👉 Replace the badges' colors/text only if you want. These render automatically. -->
 ![ROS](https://img.shields.io/badge/ROS-Noetic-22314E?logo=ros&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)
@@ -13,28 +12,25 @@
 
 </div>
 
----
 
 ## 🎥 Demo
 
 [![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
 
 A lap driven fully autonomously in the Gazebo simulation: the car detects cones, builds the track with SLAM, plans a path, and follows it under closed-loop control.
----
 
 ## 📌 Overview
 
-This project is a complete **autonomous driving software stack for a Formula Student Driverless (FS-AI) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
+This project is a complete **autonomous driving software stack for a Formula Student Driverless (FSAI) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
 
 The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation before deployment to the real vehicle.
 
  This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
 
----
 
 ## 🎯 My Contribution
 
-This is a multi-person Formula Student project. I personally designed and implemented two of its core subsystems:
+This is a multiperson Formula Student project. I personally designed and implemented two of its core subsystems:
 
 ### 🎮 Control
 - **Model Predictive Control (MPC) in Python** — a **linear time-varying (LTV) MPC** built on a kinematic bicycle model with a 10-step horizon (10 Hz). At each step the dynamics are linearized and the problem is formulated as a **quadratic program solved online with OSQP**, optimizing steering and acceleration over the state `[x, y, ψ, v]` to track the reference path.
@@ -47,7 +43,6 @@ This is a multi-person Formula Student project. I personally designed and implem
 
 *(The perception, state-estimation, path-planning, and simulation packages were built by other team members and are included here so the full stack runs end-to-end.)*
 
----
 
 ## ✨ Key Features
 
@@ -81,10 +76,10 @@ grad_proj/
 │   ├── AAM_PERCEPTION/        # Camera (YOLOv5) 
 │   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU
 │   ├── AAM_LOCALIZATION/      # FastSLAM + EKF mapping & localization
-│   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing-line generation
+│   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing line generation
 │   ├── AAM_CONTROL/           # MPC, Pure Pursuit, Stanley, PID + CAN interface
 │   ├── aam_cars/              # Vehicle model, sensors & Gazebo tracks (EUFS-based)
-│   ├── LAUNCH/                # Top-level launch files to bring up the stack
+│   ├── LAUNCH/                # Top level launch files to bring up the stack
 │   └── PLUGINS/               # Simulation / mission plugins
 └── README.md
 ```
@@ -146,9 +141,9 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 
 ## 🧭 Roadmap / Future Work
 
-- [ ] Real-time perception on embedded hardware
+- [ ] Real time perception on embedded hardware
 - [ ] Sensor fusion improvements (camera–LiDAR calibration)
-- [ ] Learning-based racing-line optimization
+- [ ] Learning based racing line optimization
 - [ ] Full deployment & testing on the physical vehicle
 
 ---
@@ -160,7 +155,6 @@ This project builds on excellent open-source work:
 - **[YOLOv5](https://github.com/ultralytics/yolov5)** by Ultralytics — camera cone detection.
 - **[MA-RRT path planning](https://github.com/AutonomicManipulation/ma_rrt_path_plan)** — RRT reference implementation.
 
----
 
 ## 👤 Author
 
