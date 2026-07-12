@@ -2,7 +2,7 @@
 
 # 🏎️ Autonomous Racing Car Formula Student Driverless Stack
 
-**A full self driving software pipeline for a Formula Student Driverless race car perception, localization, planning, and control — built on ROS and validated in a Gazebo simulation.**
+**A full self driving software pipeline for a Formula Student Driverless race car perception, localization, planning, and control built on ROS and validated in a Gazebo simulation.**
 
 ![ROS](https://img.shields.io/badge/ROS-Noetic-22314E?logo=ros&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white)
