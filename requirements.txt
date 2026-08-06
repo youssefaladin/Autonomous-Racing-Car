@@ -1,0 +1,28 @@
+# Python dependencies for the AAM Formula Student Driverless stack.
+#
+# ROS packages (rospy, tf, cv_bridge, ros_numpy, ackermann_msgs, ...) are not
+# listed here — install those with apt via ROS Noetic, not pip.
+
+# Core numerics
+numpy>=1.20
+scipy>=1.5
+
+# Control — QP solver used by the LTV MPC
+osqp>=0.6.2
+
+# Perception — camera cone detection (YOLOv5)
+torch>=1.8
+torchvision>=0.9
+opencv-python>=4.5
+Pillow>=8.0
+pandas>=1.1
+seaborn>=0.11
+tqdm>=4.60
+PyYAML>=5.3
+
+# Vehicle I/O — CAN interface to the VCU
+python-can>=3.3
+cantools>=36.0
+
+# Plotting / debugging
+matplotlib>=3.3
