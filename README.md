@@ -23,9 +23,11 @@ A lap driven fully autonomously in the Gazebo simulation: the car detects cones,
 
 This project is a complete **autonomous driving software stack for a Formula Student Driverless (FSAI) race car**. Given only a track outlined by colored cones, the vehicle perceives its surroundings, estimates its own motion, maps the track, plans a racing line, and controls steering and throttle to complete laps — with no human input.
 
-The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation before deployment to the real vehicle.
+The entire stack is developed in **ROS** and validated in a **Gazebo** physics simulation.
 
- This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
+> **Scope:** this stack runs in simulation only. It was built to be deployed on the physical car, and the CAN interface to the vehicle's VCU is implemented, but the team could not fund the hardware, so it was never run on the real vehicle. To keep the simulation honest we injected sensor noise and modelled tyre grip rather than tuning against an idealised lap.
+
+This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
 
 
 ## 🎯 My Contribution
@@ -47,7 +49,7 @@ This is a multiperson Formula Student project. I personally designed and impleme
 ## ✨ Key Features
 
 - **End-to-end autonomy** — a full perceive → estimate → map → plan → control loop running in real time on ROS.
-- **Dual-sensor perception** — cone detection from a **camera (YOLOv5)** fused into a single obstacle map.
+- **Camera perception** — cone detection and colour classification from a **camera (YOLOv5)**, published as an obstacle map. LiDAR clustering exists in `AAM_PERCEPTION/lidar_cone_detection` but the raced configuration is camera-only.
 - **SLAM & localization** — **FastSLAM** (particle filter) with **per-particle EKF** landmark updates and loop closure builds a map of the track and localizes the car within it.
 - **Path planning** — **RRT-based** exploration plus midline generation from cone pairs to produce a drivable racing line.
 - **Multiple controllers** — a **linear time-varying MPC (Python, OSQP)** with curvature-aware speed profiling, plus classical baselines (**Pure Pursuit, Stanley, PID**) for benchmarking.
@@ -71,18 +73,26 @@ Each stage is an independent ROS package that communicates over topics, so modul
 ## 🗂️ Repository Structure
 
 ```
-grad_proj/
+Autonomous-Racing-Car/
 ├── src/
-│   ├── AAM_PERCEPTION/        # Camera (YOLOv5) 
+│   ├── AAM_PERCEPTION/        # Camera cone detection (YOLOv5), LiDAR clustering
 │   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU
-│   ├── AAM_LOCALIZATION/      # FastSLAM + EKF mapping & localization
+│   ├── AAM_LOCALIZATION/      # FastSLAM + per-particle EKF mapping & localization
 │   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing line generation
-│   ├── AAM_CONTROL/           # MPC, Pure Pursuit, Stanley, PID + CAN interface
+│   ├── AAM_CONTROL/           # MPC, Stanley, Pure Pursuit, PID + CAN interface
 │   ├── aam_cars/              # Vehicle model, sensors & Gazebo tracks (EUFS-based)
 │   ├── LAUNCH/                # Top level launch files to bring up the stack
 │   └── PLUGINS/               # Simulation / mission plugins
 └── README.md
 ```
+
+Controllers in `AAM_CONTROL/src`:
+
+| File | Mission | Method |
+|------|---------|--------|
+| `mpc_controller_osqp.py` | Trackdrive | LTV MPC, 10-step horizon @ 10 Hz, QP via OSQP |
+| `stanley_acceleration.py` | Acceleration | Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
+| `purepursuit.py`, `stanelyCK.py`, `pid_code.py` | — | Classical baselines used for benchmarking |
 ---
 
 ## 🛠️ Tech Stack
@@ -105,13 +115,16 @@ grad_proj/
 - Ubuntu 20.04
 - [ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
 - Gazebo 11
-- Python 3.8+ with the packages in `
+- Python 3.8+ with the packages in [`requirements.txt`](requirements.txt)
 
 ### Build
 ```bash
 # Clone into a catkin workspace
 mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
-git clone https://github.com/youssefaladin/grad_proj.git .
+git clone https://github.com/youssefaladin/Autonomous-Racing-Car.git .
+
+# Python dependencies
+pip install -r requirements.txt
 
 # Build
 cd ~/catkin_ws
@@ -130,10 +143,13 @@ roslaunch aam_cars small_track.launch    # loads the Gazebo track
 
 ## 🧭 Roadmap / Future Work
 
-- [✔️] Real time perception on embedded hardware
-- [✔️] Sensor fusion improvements (camera–LiDAR calibration)
-- [✔️] Learning based racing line optimization
-- [✔️] Full deployment & testing on the physical vehicle
+None of the below were reached — the project ended at simulation when the team could not fund the hardware.
+
+- [ ] Real time perception on embedded hardware
+- [ ] Sensor fusion improvements (camera–LiDAR calibration)
+- [ ] Learning based racing line optimization
+- [ ] Full deployment & testing on the physical vehicle
+- [ ] Port from ROS Noetic to ROS 2
 
 ---
 
@@ -145,19 +161,17 @@ This project builds on excellent open-source work:
 - **[MA-RRT path planning](https://github.com/AutonomicManipulation/ma_rrt_path_plan)** — RRT reference implementation.
 
 
-## 👤 Author
+## 👥 Team
 
-**Youssef Alaa Eldin Hamada**
-Control & Localization Engineer — Formula Student team AAM
-**Hazem Mohamed Belal** 
-Path Planning &  Localization Engineer — Formula Student team AAM
-*(Implemented RRT Algorithm)*
-**Amr El-Meligy** 
-State estimation — Formula Student team AAM
-**Karim Abo El-Azam** 
- Perception— Formula Student team AAM
- **Abdelrahman bassiouny** 
- Perception— Formula Student team AAM
+Formula Student team **AAM**, Arab Academy for Science and Technology.
+
+| Name | Role |
+|------|------|
+| **Youssef Alaa Eldin Hamada** *(repo author)* | Control & Localization — MPC, Stanley, FastSLAM |
+| **Hazem Mohamed Belal** | Path Planning & Localization — RRT implementation |
+| **Amr El-Meligy** | State Estimation |
+| **Karim Abo El-Azam** | Perception |
+| **Abdelrahman Bassiouny** | Perception |
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/youssef-aladdin-a58056301/)
 [![Email](https://img.shields.io/badge/Email-Contact-D14836?logo=gmail&logoColor=white)](mailto:youssefaladdinn@gmail.com)
