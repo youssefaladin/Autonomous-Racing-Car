@@ -22,11 +22,18 @@ SOFTWARE.
 
 ---
 
-Portions of this repository are derived from third-party open-source projects
-and remain under their original licenses:
+IMPORTANT: the MIT terms above cover the code written by this team — the
+AAM_CONTROL, AAM_LOCALIZATION, AAM_PATH_PLANNING and AAM_STATE_ESTIMATION
+packages. They do NOT cover the whole repository. Several packages are
+third-party and remain under their own, more restrictive licenses:
 
-  - EUFS Simulator (https://gitlab.com/eufs/eufs_sim) — vehicle model, sensors
-    and Gazebo track assets under src/aam_cars/
-  - YOLOv5 (https://github.com/ultralytics/yolov5) by Ultralytics, AGPL-3.0 —
-    vendored under src/AAM_PERCEPTION/yolov5_ros/src/yolov5/
-  - MA-RRT path planning (https://github.com/AutonomicManipulation/ma_rrt_path_plan)
+  - src/AAM_PERCEPTION/yolov5_ros/ — GPL-3.0 (see its own LICENSE file)
+  - src/AAM_PERCEPTION/yolov5_ros/src/yolov5/ — YOLOv5 by Ultralytics,
+    GPL-3.0. This is a pre-2023 release; current upstream YOLOv5 is AGPL-3.0.
+  - src/aam_cars/ — vehicle model, sensors and Gazebo track assets from the
+    EUFS Simulator (https://gitlab.com/eufs/eufs_sim)
+  - src/ma_rrt_path_plan/ — MA-RRT reference implementation
+    (https://github.com/AutonomicManipulation/ma_rrt_path_plan)
+
+If you reuse anything from this repository, check the license of the specific
+package you are taking code from.
