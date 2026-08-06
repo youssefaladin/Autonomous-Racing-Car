@@ -92,7 +92,7 @@ Controllers in `AAM_CONTROL/src`:
 |------|---------|--------|
 | `mpc_controller_osqp.py` | Trackdrive | LTV MPC, 10-step horizon @ 10 Hz, QP via OSQP |
 | `stanley_acceleration.py` | Acceleration | Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
-| `purepursuit.py`, `stanelyCK.py`, `pid_code.py` | — | Classical baselines used for benchmarking |
+
 ---
 
 ## 🛠️ Tech Stack
