@@ -43,7 +43,7 @@ The entire stack is developed in **ROS** and validated in a **Gazebo** physics s
 
 > **Scope:** this stack runs in simulation only. It was built to be deployed on the physical car, and the CAN interface to the vehicle's VCU is implemented, but the team could not fund the hardware, so it was never run on the real vehicle. To keep the simulation honest we injected sensor noise and modelled tyre grip rather than tuning against an idealised lap.
 
-This was my graduation project with Formula Student team **AAM** at **Arab Academy for Science and Technology**.
+This was my **B.Sc. graduation project** at **Arab Academy for Science and Technology**, built by a team of five. The problem and the vehicle specification are taken from **Formula Student AI (FS-AI)** — the ADS-DV platform, its CAN interface, and the standard FSD missions — but this is a university project, not a competition entry.
 
 
 ## 🎯 My Contribution
@@ -182,7 +182,7 @@ This project builds on excellent open-source work:
 
 ## 👥 Team
 
-Formula Student team **AAM**, Arab Academy for Science and Technology.
+B.Sc. graduation project, Arab Academy for Science and Technology.
 
 | Name | Role |
 |------|------|
