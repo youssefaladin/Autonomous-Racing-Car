@@ -25,6 +25,10 @@ A lap driven fully autonomously in the Gazebo simulation: the car detects cones,
 
 https://github.com/user-attachments/assets/08708d28-15d3-44b9-ae0a-d8c539d4a37f
 
+
+https://github.com/user-attachments/assets/c7190177-2290-4cea-bdcc-e60d69c7a8d3
+
+
 RRT\* exploration running against the detected cone map. The planner samples toward multiple remote goals, grows a tree through the drivable corridor, and generates the midline waypoints that the controller then tracks.
 
 
