@@ -17,7 +17,13 @@
 
 [![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
 
+https://github.com/user-attachments/assets/08708d28-15d3-44b9-ae0a-d8c539d4a37f
+
+
 A lap driven fully autonomously in the Gazebo simulation: the car detects cones, builds the track with SLAM, plans a path, and follows it under closed-loop control.
+
+
+
 
 ## 📌 Overview
 
