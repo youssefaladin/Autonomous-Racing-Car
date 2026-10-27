@@ -51,11 +51,11 @@ This was my **B.Sc. graduation project** at **Arab Academy for Science and Techn
 This is a multiperson Formula Student project. I designed the end-to-end pipeline — the stage breakdown and the ROS interfaces between them, shown in the [architecture diagram](#-system-architecture) below — and personally implemented two of its core subsystems:
 
 ### 🎮 Control
-- **Extended Stanley lateral controller** (`stanley_controller.py`) — the controller the car actually raced with. Heading error plus a speed-softened cross-track term, with an **understeer feedforward** (`-k_ss·v²·κ`) that pre-steers for the upcoming curvature and a **yaw-damping** term, so the feedback loop is not doing all the work.
+- **Extended Stanley lateral controller** (`stanley_controller.py`) — the controller the full stack ran with in simulation. Heading error plus a speed-softened cross-track term, with an **understeer feedforward** (`-k_ss·v²·κ`) that pre-steers for the upcoming curvature and a **yaw-damping** term, so the feedback loop is not doing all the work.
 - **Curvature-aware speed profiling** — the controller estimates path curvature ahead and adapts target speed accordingly, braking into corners and accelerating on straights.
 - **Waypoint smoothing** — a moving-average filter over recent waypoint history stabilizes the reference path and reduces jitter in the control commands.
 - **Classical baselines** — **Pure Pursuit** and **PID** controllers, used to benchmark against the Stanley variant.
-- **MPC — attempted, not completed.** An OSQP quadratic-program MPC was developed alongside (`archive/mpc_controller_osqp.py`) but never worked: an off-by-one in the constraint matrix left the first control input outside every constraint, so the solver correctly returned zero steering on every cycle. It is kept in `archive/` for reference and was never the raced controller.
+- **MPC — attempted, not completed.** An OSQP quadratic-program MPC was developed alongside (`archive/mpc_controller_osqp.py`) but never worked: an off-by-one in the constraint matrix left the first control input outside every constraint, so the solver correctly returned zero steering on every cycle. It is kept in `archive/` for reference and was never the controller the stack ran with.
 
 ### 🗺️ SLAM & Localization
 - **FastSLAM with an EKF** — a particle-filter SLAM implementation (20 particles) where each particle maintains its own map, with **per-particle Extended Kalman Filter** updates for cone landmark positions and **loop-closure detection** to correct drift over a full lap.
@@ -66,7 +66,7 @@ This is a multiperson Formula Student project. I designed the end-to-end pipelin
 ## ✨ Key Features
 
 - **End-to-end autonomy** — a full perceive → estimate → map → plan → control loop running in real time on ROS.
-- **Camera perception** — cone detection and colour classification from a **camera (YOLOv5)**, published as an obstacle map. LiDAR clustering exists in `AAM_PERCEPTION/lidar_cone_detection` but the raced configuration is camera-only.
+- **Camera perception** — cone detection and colour classification from a **camera (YOLOv5)**, published as an obstacle map. LiDAR clustering exists in `AAM_PERCEPTION/lidar_cone_detection` but the configuration used is camera-only.
 - **SLAM & localization** — **FastSLAM** (particle filter) with **per-particle EKF** landmark updates and loop closure builds a map of the track and localizes the car within it.
 - **Path planning** — **RRT\*-based** exploration (`ma_rrt_path_plan`) plus midline generation from cone pairs to produce a drivable racing line.
 - **Control** — an **extended Stanley** controller (heading + softened cross-track + yaw damping + understeer feedforward) with curvature-aware speed profiling, plus **Pure Pursuit** and **PID** baselines. An OSQP MPC was attempted but never completed — see `AAM_CONTROL/src/archive/`.
@@ -107,7 +107,7 @@ Controllers in `AAM_CONTROL/src`:
 
 | File | Mission | Method |
 |------|---------|--------|
-| `stanley_controller.py` | Trackdrive | **Raced controller.** Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
+| `stanley_controller.py` | Trackdrive | **Primary controller.** Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
 | `stanley_acceleration.py` | Acceleration | Same method, tuned for the acceleration run |
 | `purepursuit.py`, `pid_code.py` | — | Baselines |
 | `archive/mpc_controller_osqp.py` | — | Incomplete OSQP MPC. Returns zero steering; kept for reference only |
