@@ -25,11 +25,13 @@ A lap driven fully autonomously in the Gazebo simulation: the car detects cones,
 
 https://github.com/user-attachments/assets/08708d28-15d3-44b9-ae0a-d8c539d4a37f
 
+RRT\* exploration running against the detected cone map. The planner samples toward multiple remote goals, grows a tree through the drivable corridor, and generates the midline waypoints that the controller then tracks.
+
+### Localization & SLAM
 
 https://github.com/user-attachments/assets/c7190177-2290-4cea-bdcc-e60d69c7a8d3
 
-
-RRT\* exploration running against the detected cone map. The planner samples toward multiple remote goals, grows a tree through the drivable corridor, and generates the midline waypoints that the controller then tracks.
+FastSLAM running live: 20 particles each carry their own map of the track, with a per-particle EKF updating cone landmark positions as they are re-observed. The particle cloud tightens as landmarks accumulate, and loop closure at the end of the lap corrects the drift built up along the way.
 
 
 
@@ -46,7 +48,7 @@ This was my graduation project with Formula Student team **AAM** at **Arab Acade
 
 ## 🎯 My Contribution
 
-This is a multiperson Formula Student project. I personally designed and implemented two of its core subsystems:
+This is a multiperson Formula Student project. I designed the end-to-end pipeline — the stage breakdown and the ROS interfaces between them, shown in the [architecture diagram](#-system-architecture) below — and personally implemented two of its core subsystems:
 
 ### 🎮 Control
 - **Extended Stanley lateral controller** (`stanley_controller.py`) — the controller the car actually raced with. Heading error plus a speed-softened cross-track term, with an **understeer feedforward** (`-k_ss·v²·κ`) that pre-steers for the upcoming curvature and a **yaw-damping** term, so the feedback loop is not doing all the work.
