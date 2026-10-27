@@ -15,13 +15,17 @@
 
 ## 🎥 Demo
 
+### Full autonomous lap
+
 [![Watch the demo](https://img.youtube.com/vi/jIS6mQgD91I/maxresdefault.jpg)](https://youtu.be/jIS6mQgD91I)
-
-https://github.com/user-attachments/assets/08708d28-15d3-44b9-ae0a-d8c539d4a37f
-
 
 A lap driven fully autonomously in the Gazebo simulation: the car detects cones, builds the track with SLAM, plans a path, and follows it under closed-loop control.
 
+### Path planning
+
+https://github.com/user-attachments/assets/08708d28-15d3-44b9-ae0a-d8c539d4a37f
+
+RRT\* exploration running against the detected cone map. The planner samples toward multiple remote goals, grows a tree through the drivable corridor, and generates the midline waypoints that the controller then tracks.
 
 
 
@@ -41,10 +45,11 @@ This was my graduation project with Formula Student team **AAM** at **Arab Acade
 This is a multiperson Formula Student project. I personally designed and implemented two of its core subsystems:
 
 ### 🎮 Control
-- **Model Predictive Control (MPC) in Python** — a **linear time-varying (LTV) MPC** built on a kinematic bicycle model with a 10-step horizon (10 Hz). At each step the dynamics are linearized and the problem is formulated as a **quadratic program solved online with OSQP**, optimizing steering and acceleration over the state `[x, y, ψ, v]` to track the reference path.
+- **Extended Stanley lateral controller** (`stanley_controller.py`) — the controller the car actually raced with. Heading error plus a speed-softened cross-track term, with an **understeer feedforward** (`-k_ss·v²·κ`) that pre-steers for the upcoming curvature and a **yaw-damping** term, so the feedback loop is not doing all the work.
 - **Curvature-aware speed profiling** — the controller estimates path curvature ahead and adapts target speed accordingly, braking into corners and accelerating on straights.
 - **Waypoint smoothing** — a moving-average filter over recent waypoint history stabilizes the reference path and reduces jitter in the control commands.
-- **Classical control baselines** — I also implemented **Pure Pursuit**, **Stanley**, and **PID** controllers to benchmark the MPC against established methods.
+- **Classical baselines** — **Pure Pursuit** and **PID** controllers, used to benchmark against the Stanley variant.
+- **MPC — attempted, not completed.** An OSQP quadratic-program MPC was developed alongside (`archive/mpc_controller_osqp.py`) but never worked: an off-by-one in the constraint matrix left the first control input outside every constraint, so the solver correctly returned zero steering on every cycle. It is kept in `archive/` for reference and was never the raced controller.
 
 ### 🗺️ SLAM & Localization
 - **FastSLAM with an EKF** — a particle-filter SLAM implementation (20 particles) where each particle maintains its own map, with **per-particle Extended Kalman Filter** updates for cone landmark positions and **loop-closure detection** to correct drift over a full lap.
@@ -57,8 +62,8 @@ This is a multiperson Formula Student project. I personally designed and impleme
 - **End-to-end autonomy** — a full perceive → estimate → map → plan → control loop running in real time on ROS.
 - **Camera perception** — cone detection and colour classification from a **camera (YOLOv5)**, published as an obstacle map. LiDAR clustering exists in `AAM_PERCEPTION/lidar_cone_detection` but the raced configuration is camera-only.
 - **SLAM & localization** — **FastSLAM** (particle filter) with **per-particle EKF** landmark updates and loop closure builds a map of the track and localizes the car within it.
-- **Path planning** — **RRT-based** exploration plus midline generation from cone pairs to produce a drivable racing line.
-- **Multiple controllers** — a **linear time-varying MPC (Python, OSQP)** with curvature-aware speed profiling, plus classical baselines (**Pure Pursuit, Stanley, PID**) for benchmarking.
+- **Path planning** — **RRT\*-based** exploration (`ma_rrt_path_plan`) plus midline generation from cone pairs to produce a drivable racing line.
+- **Control** — an **extended Stanley** controller (heading + softened cross-track + yaw damping + understeer feedforward) with curvature-aware speed profiling, plus **Pure Pursuit** and **PID** baselines. An OSQP MPC was attempted but never completed — see `AAM_CONTROL/src/archive/`.
 - **Hardware-ready** — CAN interface (`VCU2AI` / `AI2VCU`) to command the real vehicle's actuators.
 - **Simulation-first** — reproducible testing on standard FSD missions (acceleration, skidpad, trackdrive) in Gazebo.
 
@@ -85,7 +90,7 @@ Autonomous-Racing-Car/
 │   ├── AAM_STATE_ESTIMATION/  # Velocity / motion estimation from IMU
 │   ├── AAM_LOCALIZATION/      # FastSLAM + per-particle EKF mapping & localization
 │   ├── AAM_PATH_PLANNING/     # RRT planner + midline racing line generation
-│   ├── AAM_CONTROL/           # MPC, Stanley, Pure Pursuit, PID + CAN interface
+│   ├── AAM_CONTROL/           # Stanley, Pure Pursuit, PID + CAN interface
 │   ├── aam_cars/              # Vehicle model, sensors & Gazebo tracks (EUFS-based)
 │   ├── LAUNCH/                # Top level launch files to bring up the stack
 │   └── PLUGINS/               # Simulation / mission plugins
@@ -96,8 +101,10 @@ Controllers in `AAM_CONTROL/src`:
 
 | File | Mission | Method |
 |------|---------|--------|
-| `mpc_controller_osqp.py` | Trackdrive | LTV MPC, 10-step horizon @ 10 Hz, QP via OSQP |
-| `stanley_acceleration.py` | Acceleration | Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
+| `stanley_controller.py` | Trackdrive | **Raced controller.** Extended Stanley: heading + softened cross-track + yaw damping + understeer feedforward |
+| `stanley_acceleration.py` | Acceleration | Same method, tuned for the acceleration run |
+| `purepursuit.py`, `pid_code.py` | — | Baselines |
+| `archive/mpc_controller_osqp.py` | — | Incomplete OSQP MPC. Returns zero steering; kept for reference only |
 
 ---
 
@@ -110,7 +117,7 @@ Controllers in `AAM_CONTROL/src`:
 | **Simulation** | Gazebo, RViz |
 | **Perception** | YOLOv5, OpenCV |
 | **Estimation** | FastSLAM, Extended Kalman Filter |
-| **Control** | Model Predictive Control (OSQP QP solver), Pure Pursuit, Stanley, PID |
+| **Control** | Stanley (extended), Pure Pursuit, PID |
 | **Vehicle I/O** | CAN bus (VCU ↔ AI) |
 
 ---
@@ -164,7 +171,7 @@ None of the below were reached — the project ended at simulation when the team
 This project builds on excellent open-source work:
 - **[EUFS Simulator](https://gitlab.com/eufs/eufs_sim)** — vehicle model, sensors, and track assets used in the Gazebo simulation.
 - **[YOLOv5](https://github.com/ultralytics/yolov5)** by Ultralytics — camera cone detection.
-- **[MA-RRT path planning](https://github.com/AutonomicManipulation/ma_rrt_path_plan)** — RRT reference implementation.
+- **[ma_rrt_path_plan](https://github.com/egnitionHamburg/ma_rrt_path_plan)** by egnition (TU Hamburg FS team) — the RRT* path planner used for trackdrive exploration.
 
 
 ## 👥 Team
@@ -173,7 +180,7 @@ Formula Student team **AAM**, Arab Academy for Science and Technology.
 
 | Name | Role |
 |------|------|
-| **Youssef Alaa Eldin Hamada** *(repo author)* | Control & Localization — MPC, Stanley, FastSLAM |
+| **Youssef Alaa Eldin Hamada** *(repo author)* | Control & Localization — Stanley, FastSLAM |
 | **Hazem Mohamed Belal** | Path Planning & Localization — RRT implementation |
 | **Amr El-Meligy** | State Estimation |
 | **Karim Abo El-Azam** | Perception |
